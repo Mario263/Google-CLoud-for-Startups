@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide: Google for Startups Cloud Program</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Slate Gray & Google Blue -->
+    <!-- Application Structure Plan: A top-down, single-page dashboard structure was chosen over a linear report format to empower the user. The goal is to allow a busy founder to get the most relevant information quickly. The core interaction is a "Tier Selector" at the top, which instantly updates key visualizations and data points. This allows for immediate comparison of the program's tiers (Start vs. Scale vs. AI-First), which is the most critical decision point. The user can then scroll down to dedicated, self-contained sections for a "Benefits Deep Dive," an "Application Guide," and a "Strategic Roadmap." This structure supports both quick, high-level understanding and deeper, more focused exploration, making the complex information highly consumable and actionable. -->
+    <!-- Visualization & Content Choices: 
+        - Program Tiers (Report Info -> Tier comparison; Goal -> Compare): An interactive button group coupled with a dynamic bar chart (Chart.js) was chosen. This allows users to actively switch between tiers and see the financial benefits change instantly, which is more impactful than a static table.
+        - Benefits Valuation (Report Info -> List of all benefits; Goal -> Inform/Compare): A combination of a donut chart and interactive cards was used. The donut chart visually breaks down the total value of the top-tier package, while the cards use icons (Unicode) and concise text to present the different types of benefits (Financial, Technical, etc.) in an easily scannable grid. This organizes the information thematically.
+        - Application Process (Report Info -> Prerequisites and steps; Goal -> Organize/Guide): A simple, clean, step-by-step visual diagram made with HTML/Tailwind was chosen to represent the application flow. This is more intuitive and less intimidating than a dense list of requirements. Interactive checklists are used to make the prerequisites actionable.
+        - Strategic Journey (Report Info -> Post-acceptance strategy; Goal -> Guide): A timeline diagram built with HTML/Tailwind visually represents the startup's journey through the program, from pre-funding to growth. This helps frame the program as a long-term partnership rather than a one-time grant.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover {
+            color: #2563eb; /* blue-600 */
+        }
+        .tier-button.active {
+            background-color: #2563eb; /* blue-600 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .step-item.active .step-circle {
+            background-color: #2563eb; /* blue-600 */
+            color: white;
+            border-color: #2563eb;
+        }
+        .step-item.active .step-line {
+            background-color: #2563eb;
+        }
+        .checklist-item {
+            cursor: pointer;
+        }
+        .checklist-item .icon {
+            transition: all 0.2s ease-in-out;
+        }
+        .checklist-item.checked .icon {
+            transform: scale(1.1);
+            color: #22c55e; /* green-500 */
+        }
+        .checklist-item.checked .text {
+            text-decoration: line-through;
+            color: #64748b; /* slate-500 */
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-slate-200">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-slate-800">Google for Startups</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#overview" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">Overview</a>
+                        <a href="#benefits" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">Benefits Deep Dive</a>
+                        <a href="#application" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">Application Guide</a>
+                        <a href="#roadmap" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">Strategic Roadmap</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- Section 1: Program Overview -->
+        <section id="overview" class="text-center mb-24">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">Your Strategic Cloud Partner</h1>
+            <p class="max-w-3xl mx-auto text-lg text-slate-600 mb-8">This guide demystifies the Google for Startups Cloud Program. It's more than just credits; it's a tiered ecosystem designed to support your AI startup from initial idea to massive scale. Use the selector below to explore how the program adapts to your company's stage.</p>
+
+            <div class="p-2 bg-slate-200 rounded-xl inline-flex space-x-2 mb-8" id="tierSelector">
+                <button data-tier="start" class="tier-button active text-slate-700 rounded-lg py-2 px-4 text-sm font-semibold transition-all duration-300">Start Tier (Pre-Funding)</button>
+                <button data-tier="scale" class="tier-button text-slate-700 rounded-lg py-2 px-4 text-sm font-semibold transition-all duration-300">Scale Tier (Funded)</button>
+                <button data-tier="ai" class="tier-button text-slate-700 rounded-lg py-2 px-4 text-sm font-semibold transition-all duration-300">AI-First Tier (Funded)</button>
+            </div>
+
+            <div class="chart-container mb-8">
+                <canvas id="creditsChart"></canvas>
+            </div>
+            
+            <div id="tierDetails" class="grid md:grid-cols-3 gap-8 text-left">
+                <!-- Tier detail cards will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- Section 2: Benefits Deep Dive -->
+        <section id="benefits" class="mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800">A Comprehensive Value Package</h2>
+                <p class="max-w-3xl mx-auto text-lg text-slate-600 mt-4">The program's true value extends far beyond credits. It's a holistic package of financial, technical, business, and ecosystem support designed to de-risk development and accelerate growth. Below is a breakdown of the benefits available to a funded, AI-First startup.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-5 gap-8 items-center">
+                <div class="lg:col-span-2">
+                     <div class="chart-container" style="height: 350px; max-height: 350px;">
+                        <canvas id="benefitsChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-slate-500 mt-2">Value breakdown of the AI-First package.</p>
+                </div>
+                <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-lg mb-2 flex items-center"><span class="text-2xl mr-3">💰</span> Financial Runway</h3>
+                        <p class="text-slate-600 text-sm">Directly subsidizes your largest expense—compute infrastructure—freeing up capital for hiring, marketing, and growth.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-lg mb-2 flex items-center"><span class="text-2xl mr-3">🛠️</span> Technical De-Risking</h3>
+                        <p class="text-slate-600 text-sm">Access Google's own engineers for architectural reviews and enhanced support, preventing costly mistakes and technical debt.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-lg mb-2 flex items-center"><span class="text-2xl mr-3">📈</span> Growth Acceleration</h3>
+                        <p class="text-slate-600 text-sm">Leverage a Startup Success Manager, co-marketing opportunities, and networking events to find customers and partners.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-lg mb-2 flex items-center"><span class="text-2xl mr-3">🌐</span> Ecosystem Integration</h3>
+                        <p class="text-slate-600 text-sm">Gain free access to essential tools like Google Workspace and Maps Platform, plus insights into Google's future AI roadmap.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Application Guide -->
+        <section id="application" class="mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800">Your Path to Approval</h2>
+                <p class="max-w-3xl mx-auto text-lg text-slate-600 mt-4">The application process is fast, but preparation is key. Follow this guide to ensure a smooth and successful submission. Your goal is to present a professional, technically competent, and visionary startup.</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-2xl mb-2 text-slate-800">Application Readiness Checklist</h3>
+                <p class="text-slate-600 mb-8">Ensure these assets are in place before you apply. Click to mark as complete.</p>
+                <div class="space-y-4" id="checklist">
+                    <div class="checklist-item flex items-center p-3 bg-slate-50 rounded-lg">
+                        <span class="icon text-xl text-slate-400 mr-4">☐</span>
+                        <span class="text font-medium text-slate-700">Formally Incorporated Legal Entity</span>
+                    </div>
+                    <div class="checklist-item flex items-center p-3 bg-slate-50 rounded-lg">
+                        <span class="icon text-xl text-slate-400 mr-4">☐</span>
+                        <span class="text font-medium text-slate-700">Live, Public Company Website</span>
+                    </div>
+                    <div class="checklist-item flex items-center p-3 bg-slate-50 rounded-lg">
+                        <span class="icon text-xl text-slate-400 mr-4">☐</span>
+                        <span class="text font-medium text-slate-700">Professional Email on Company Domain</span>
+                    </div>
+                     <div class="checklist-item flex items-center p-3 bg-slate-50 rounded-lg">
+                        <span class="icon text-xl text-slate-400 mr-4">☐</span>
+                        <span class="text font-medium text-slate-700">Active Google Cloud Platform (GCP) Account</span>
+                    </div>
+                    <div class="checklist-item flex items-center p-3 bg-slate-50 rounded-lg">
+                        <span class="icon text-xl text-slate-400 mr-4">☐</span>
+                        <span class="text font-medium text-slate-700">Valid Google Cloud Billing ID</span>
+                    </div>
+                </div>
+                <div class="mt-8 text-center">
+                    <a href="https://cloud.google.com/startup/apply" target="_blank" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">Apply Now</a>
+                    <p class="text-sm text-slate-500 mt-3">Approval is often received within hours.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Section 4: Strategic Roadmap -->
+        <section id="roadmap" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800">The Startup Journey with Google</h2>
+                <p class="max-w-3xl mx-auto text-lg text-slate-600 mt-4">Getting accepted is just the start. This roadmap outlines how to strategically leverage the program at each stage of your startup's growth, from initial prototyping to managing the "credit cliff" and beyond.</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-start space-y-8 md:space-y-0 md:space-x-8">
+                <!-- Step 1 -->
+                <div class="flex-1 text-center">
+                    <div class="relative mb-4">
+                        <div class="w-12 h-12 bg-white border-2 border-blue-600 rounded-full mx-auto flex items-center justify-center font-bold text-blue-600 text-xl shadow">1</div>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Pre-Funding (Start Tier)</h3>
+                    <p class="text-sm text-slate-600">Apply to the Start Tier to secure $2,000 in credits. Use this to build your MVP on GCP, experiment with AI services, and refine your technical architecture without any cash burn.</p>
+                </div>
+
+                <!-- Connector -->
+                <div class="w-full md:w-auto self-center h-px md:h-auto md:w-px bg-slate-300 md:flex-1 mt-0 md:-mt-12"></div>
+
+                <!-- Step 2 -->
+                <div class="flex-1 text-center">
+                    <div class="relative mb-4">
+                        <div class="w-12 h-12 bg-white border-2 border-slate-400 rounded-full mx-auto flex items-center justify-center font-bold text-slate-500 text-xl">2</div>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Secure Seed Funding</h3>
+                    <p class="text-sm text-slate-600">Your primary goal is to close your first funding round. Your foothold in the Google ecosystem is a valuable asset to show investors, signaling technical credibility and future scalability.</p>
+                </div>
+                
+                <!-- Connector -->
+                <div class="w-full md:w-auto self-center h-px md:h-auto md:w-px bg-slate-300 md:flex-1 mt-0 md:-mt-12"></div>
+                
+                <!-- Step 3 -->
+                <div class="flex-1 text-center">
+                    <div class="relative mb-4">
+                        <div class="w-12 h-12 bg-white border-2 border-slate-400 rounded-full mx-auto flex items-center justify-center font-bold text-slate-500 text-xl">3</div>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Post-Funding (Scale/AI-First Tier)</h3>
+                    <p class="text-sm text-slate-600">Immediately upon funding, apply to upgrade. Unlock up to $350,000 in credits and engage your Startup Success Manager. Now is the time to scale your product and acquire users aggressively.</p>
+                </div>
+                
+                <!-- Connector -->
+                <div class="w-full md:w-auto self-center h-px md:h-auto md:w-px bg-slate-300 md:flex-1 mt-0 md:-mt-12"></div>
+
+                <!-- Step 4 -->
+                <div class="flex-1 text-center">
+                    <div class="relative mb-4">
+                        <div class="w-12 h-12 bg-white border-2 border-slate-400 rounded-full mx-auto flex items-center justify-center font-bold text-slate-500 text-xl">4</div>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Growth & Optimization</h3>
+                    <p class="text-sm text-slate-600">As you approach the end of your credit runway, focus on cost optimization. Use Google's monitoring tools to forecast expenses and refine your architecture for long-term sustainability.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="border-t border-slate-200 mt-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-slate-500">
+            <p>This is an independently created interactive guide based on publicly available information about the Google for Startups Cloud Program. Not an official Google resource.</p>
+        </div>
+    </footer>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tierData = {
+        start: {
+            label: 'Start Tier',
+            credits: 2000,
+            details: [
+                { icon: '🌱', title: 'Primary Goal', text: 'Ideation, prototyping, and initial product build before any institutional funding.' },
+                { icon: '💰', title: 'Cloud Credits', text: 'Up to $2,000 over one year. Enough to build and test your MVP.' },
+                { icon: '🧑‍💻', title: 'Support', text: 'Access to the global startup community and online technical resources.' }
+            ]
+        },
+        scale: {
+            label: 'Scale Tier',
+            credits: 200000,
+            details: [
+                { icon: '🚀', title: 'Primary Goal', text: 'Product launch, customer acquisition, and scaling post-funding (Pre-seed to Series A).' },
+                { icon: '💰', title: 'Cloud Credits', text: 'Up to $200,000 over two years, with $100k in year one.' },
+                { icon: '🤝', title: 'Support', text: 'Dedicated Startup Success Manager and $12,000 in Enhanced Support credits.' }
+            ]
+        },
+        ai: {
+            label: 'AI-First Tier',
+            credits: 350000,
+            details: [
+                { icon: '🤖', title: 'Primary Goal', text: 'Accelerated development and scaling for startups where AI is core to the product.' },
+                { icon: '💰', title: 'Cloud Credits', text: 'Up to $350,000 over two years, recognizing the high cost of AI workloads.' },
+                { icon: '🧠', title: 'Support', text: 'All Scale benefits plus access to AI experts and Google\'s AI product roadmap.' }
+            ]
+        }
+    };
+
+    let creditsChart, benefitsChart;
+    const tierSelector = document.getElementById('tierSelector');
+    const tierDetailsContainer = document.getElementById('tierDetails');
+    
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+    }
+
+    function updateTierDetails(tier) {
+        const data = tierData[tier];
+        tierDetailsContainer.innerHTML = data.details.map(item => `
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 transform hover:scale-105 transition-transform duration-300">
+                <div class="text-4xl mb-4">${item.icon}</div>
+                <h3 class="font-bold text-lg mb-2 text-slate-800">${item.title}</h3>
+                <p class="text-slate-600 text-sm">${item.text}</p>
+            </div>
+        `).join('');
+    }
+
+    function renderCreditsChart(initialTier) {
+        const ctx = document.getElementById('creditsChart').getContext('2d');
+        creditsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [tierData.start.label, tierData.scale.label, tierData.ai.label],
+                datasets: [{
+                    label: 'Max Cloud Credits (USD)',
+                    data: [tierData.start.credits, tierData.scale.credits, tierData.ai.credits],
+                    backgroundColor: [
+                        '#94a3b8', // slate-400
+                        '#94a3b8',
+                        '#94a3b8',
+                    ],
+                    borderColor: [
+                        '#64748b',
+                        '#64748b',
+                        '#64748b',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += formatCurrency(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1000) + 'k';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        updateCreditsChart(initialTier);
+    }
+    
+    function updateCreditsChart(activeTier) {
+        const backgroundColors = creditsChart.data.datasets[0].backgroundColor;
+        const borderColors = creditsChart.data.datasets[0].borderColor;
+        
+        Object.keys(tierData).forEach((tier, index) => {
+            if (tier === activeTier) {
+                backgroundColors[index] = '#3b82f6'; // blue-500
+                borderColors[index] = '#2563eb'; // blue-600
+            } else {
+                backgroundColors[index] = '#cbd5e1'; // slate-300
+                borderColors[index] = '#94a3b8'; // slate-400
+            }
+        });
+        creditsChart.update();
+    }
+
+    tierSelector.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            const selectedTier = e.target.dataset.tier;
+            
+            // Update button styles
+            tierSelector.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            // Update chart and details
+            updateCreditsChart(selectedTier);
+            updateTierDetails(selectedTier);
+        }
+    });
+    
+    function renderBenefitsChart() {
+        const ctx = document.getElementById('benefitsChart').getContext('2d');
+        benefitsChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Cloud Credits', 'Enhanced Support', 'Ecosystem Perks (Workspace, Maps)'],
+                datasets: [{
+                    data: [350000, 12000, 10200],
+                    backgroundColor: [
+                        '#2563eb', // blue-600
+                        '#60a5fa', // blue-400
+                        '#93c5fd', // blue-300
+                    ],
+                    borderColor: '#f8fafc', // slate-50
+                    borderWidth: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                         callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += formatCurrency(context.parsed);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    }
+
+    // Checklist functionality
+    const checklist = document.getElementById('checklist');
+    checklist.addEventListener('click', (e) => {
+        const item = e.target.closest('.checklist-item');
+        if (item) {
+            item.classList.toggle('checked');
+            const icon = item.querySelector('.icon');
+            icon.textContent = item.classList.contains('checked') ? '☑' : '☐';
+        }
+    });
+
+    // Initial render
+    renderCreditsChart('start');
+    updateTierDetails('start');
+    renderBenefitsChart();
+
+});
+</script>
+
+</body>
+</html>
