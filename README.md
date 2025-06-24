@@ -1,10 +1,10 @@
-###Interactive Guide: Google for Startups Cloud Program
-##🚀 1. Overview
+# Google for Startups Cloud Program
+## 🚀 1. Overview
 This project is a single-page, interactive web application designed to provide a comprehensive and easily digestible guide to the Google for Startups Cloud Program.
 
 The goal of this application is to transform the complex, text-heavy information about the program into an intuitive, visual, and exploratory experience. It is specifically tailored for a startup founder or executive who needs to quickly understand the program's benefits, eligibility tiers, and strategic value. Instead of reading a static report, the user can interact directly with the data to compare options and plan their application strategy.
 
-##✨ 2. Key Features
+## ✨ 2. Key Features
 Interactive Tier Selector: Users can switch between the "Start," "Scale," and "AI-First" tiers to dynamically update charts and information cards, allowing for instant and clear comparison of benefits.
 
 Dynamic Data Visualizations: Utilizes Chart.js to create:
@@ -21,7 +21,7 @@ Strategic Startup Roadmap: A visual timeline illustrates the startup's journey t
 
 Fully Responsive Design: The application is built with a mobile-first approach and is accessible and easy to use on any device, from a large desktop monitor to a smartphone.
 
-##▶️ 3. How to Use
+## ▶️ 3. How to Use
 Open the File: Simply open the google_startup_spa.html file in any modern web browser (like Chrome, Firefox, or Safari). No server or special setup is required.
 
 Explore Interactively:
@@ -36,7 +36,7 @@ Scroll through the single-page layout to move between the different sections of 
 
 Use the Navigation Bar at the top to jump directly to a specific section.
 
-##🛠️ 4. Technology Stack
+## 🛠️ 4. Technology Stack
 This application was built from the ground up as a single, self-contained HTML file using modern, standard web technologies.
 
 Structure: Semantic HTML5
@@ -51,5 +51,5 @@ Fonts: Google Fonts (Inter)
 
 No backend, server, or external libraries beyond the CDN-hosted ones listed above are required to run this application.
 
-##⚠️ 5. Disclaimer
+## ⚠️ 5. Disclaimer
 This application is an independently created interactive guide based on publicly available information about the Google for Startups Cloud Program. It is not an official Google resource. The primary purpose is for strategic analysis and presentation.
